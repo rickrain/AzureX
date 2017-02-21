@@ -143,5 +143,11 @@
     }
 
   ],
-  "outputs": {}
+  "outputs": {
+    "result": {
+      "type": "object",
+      "value": "[reference('webTier').outputs.pipFQDN]"
+    }
+
+  }
 }

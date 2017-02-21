@@ -14,7 +14,7 @@
     "parametersFolder": "deploymentParameters",
 
     "trafficManagerTemplateFileName": "trafficManager.json",
-    "trafficMaangerTemplateParametersFileName": "trafficManager.parameters.json"
+    "trafficManagerTemplateParametersFileName": "trafficManager.parameters.json"
   },
   "resources": [
     {
@@ -29,7 +29,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('parametersFolder'), '/', variables('trafficMaangerTemplateParametersFileName'), parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('parametersFolder'), '/', variables('trafficManagerTemplateParametersFileName'), parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         }
       }

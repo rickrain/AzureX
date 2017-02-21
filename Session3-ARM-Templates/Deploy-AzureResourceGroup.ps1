@@ -10,6 +10,8 @@ Param(
     [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
     [string] $TemplateFile = 'azuredeploy.json',
     [string] $TemplateParametersFile = 'azuredeploy.parameters.json',
+    [string] $TrafficManagerTemplateFile = 'azuredeploy.trafficManager.json',
+    [string] $TrafficManagerTemplateParametersFile = 'azuredeploy.trafficManager.parameters.json',
     [string] $ArtifactStagingDirectory = '.',
     [string] $DSCSourceFolder = 'DSC',
     [switch] $ValidateOnly
@@ -28,7 +30,24 @@ function Format-ValidationOutput {
     return @($ValidationOutput | Where-Object { $_ -ne $null } | ForEach-Object { @('  ' * $Depth + ': ' + $_.Message) + @(Format-ValidationOutput @($_.Details) ($Depth + 1)) })
 }
 
+# Traffic Manager Variables
+$ResourceGroupNameTM = $ResourceGroupName + '-HA'
+$ResourceGroupLocationTM = $null
+$ResourceGroupTM = Get-AzureRmResourceGroup -Name $ResourceGroupNameTM -ErrorAction SilentlyContinue
+if ($ResourceGroupTM -eq $null)
+{
+	$ResourceGroupLocationTM = $ResourceGroupLocation
+}
+else
+{
+	$ResourceGroupLocationTM = $ResourceGroupTM.Location
+}
+
 $OptionalParameters = New-Object -TypeName Hashtable
+
+$TrafficManagerTemplateFile = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, $TrafficManagerTemplateFile))
+$TrafficManagerTemplateParametersFile = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, $TrafficManagerTemplateParametersFile))
+
 $TemplateFile = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, $TemplateFile))
 $TemplateParametersFile = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, $TemplateParametersFile))
 
@@ -111,6 +130,34 @@ else {
                                        -ResourceGroupName $ResourceGroupName `
                                        -TemplateFile $TemplateFile `
                                        -TemplateParameterFile $TemplateParametersFile `
+                                       @OptionalParameters `
+                                       -Force -Verbose `
+                                       -ErrorVariable ErrorMessages
+    if ($ErrorMessages) {
+        Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+    }
+}
+
+# Traffic Manager Profile Deployment
+New-AzureRmResourceGroup -Name $ResourceGroupNameTM -Location $ResourceGroupLocationTM -Verbose -Force
+
+if ($ValidateOnly) {
+    $ErrorMessages = Format-ValidationOutput (Test-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupNameTM `
+                                                                                  -TemplateFile $TrafficManagerTemplateFile `
+                                                                                  -TemplateParameterFile $TrafficManagerTemplateParametersFile `
+                                                                                  @OptionalParameters)
+    if ($ErrorMessages) {
+        Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
+    }
+    else {
+        Write-Output '', 'Template is valid.'
+    }
+}
+else {
+    New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TrafficManagerTemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
+                                       -ResourceGroupName $ResourceGroupNameTM `
+                                       -TemplateFile $TrafficManagerTemplateFile `
+                                       -TemplateParameterFile $TrafficManagerTemplateParametersFile `
                                        @OptionalParameters `
                                        -Force -Verbose `
                                        -ErrorVariable ErrorMessages

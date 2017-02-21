@@ -135,5 +135,10 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "pipFQDN": {
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipName'))).dnsSettings.fqdn]",
+      "type": "string"
+    }
+  }
 }

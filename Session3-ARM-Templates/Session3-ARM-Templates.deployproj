@@ -25,6 +25,8 @@
   <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
   <!-- vertag<:>end -->
   <ItemGroup>
+    <Content Include="azuredeploy.trafficManager.parameters.json" />
+    <Content Include="azuredeploy.trafficManager.json" />
     <Content Include="azuredeploy.json" />
     <Content Include="azuredeploy.parameters.json" />
     <Content Include="deploymentParameters\redisCache.Standard.parameters.json" />
@@ -32,6 +34,7 @@
     <Content Include="deploymentParameters\documentDB.parameters.json" />
     <Content Include="deploymentParameters\jumpbox.parameters.json" />
     <Content Include="deploymentParameters\appInsights.parameters.json" />
+    <Content Include="deploymentParameters\trafficManager.parameters.json" />
     <Content Include="deploymentParameters\virtualNetwork.parameters.json" />
     <Content Include="deploymentParameters\webTier.parameters.json" />
     <Content Include="deploymentTemplates\redisCache.Standard.json" />
@@ -39,6 +42,7 @@
     <Content Include="deploymentTemplates\documentDB.json" />
     <Content Include="deploymentTemplates\jumpbox.json" />
     <Content Include="deploymentTemplates\appInsights.json" />
+    <Content Include="deploymentTemplates\trafficManager.json" />
     <Content Include="deploymentTemplates\virtualNetwork.json" />
     <Content Include="deploymentTemplates\webTier.json" />
     <None Include="Deployment.targets">
