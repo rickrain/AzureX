@@ -4,7 +4,8 @@
 
 Param(
     [string] [Parameter(Mandatory=$true)] $ResourceGroupLocation,
-    [string] $ResourceGroupName = 'AzureX-Session-3',
+    [string] $ResourceGroupName = 'AzureX-Session-3-' + $ResourceGroupLocation,
+    [string] $ResourceGroupNameHA = 'AzureX-Session-3-HA',
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
     [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
@@ -31,16 +32,15 @@ function Format-ValidationOutput {
 }
 
 # Traffic Manager Variables
-$ResourceGroupNameTM = $ResourceGroupName + '-HA'
-$ResourceGroupLocationTM = $null
-$ResourceGroupTM = Get-AzureRmResourceGroup -Name $ResourceGroupNameTM -ErrorAction SilentlyContinue
-if ($ResourceGroupTM -eq $null)
+$ResourceGroupLocationHA = $null
+$ResourceGroupHA = Get-AzureRmResourceGroup -Name $ResourceGroupNameHA -ErrorAction SilentlyContinue
+if ($ResourceGroupHA -eq $null)
 {
-	$ResourceGroupLocationTM = $ResourceGroupLocation
+	$ResourceGroupLocationHA = $ResourceGroupLocation
 }
 else
 {
-	$ResourceGroupLocationTM = $ResourceGroupTM.Location
+	$ResourceGroupLocationHA = $ResourceGroupHA.Location
 }
 
 $OptionalParameters = New-Object -TypeName Hashtable
@@ -139,10 +139,10 @@ else {
 }
 
 # Traffic Manager Profile Deployment
-New-AzureRmResourceGroup -Name $ResourceGroupNameTM -Location $ResourceGroupLocationTM -Verbose -Force
+New-AzureRmResourceGroup -Name $ResourceGroupNameHA -Location $ResourceGroupLocationHA -Verbose -Force
 
 if ($ValidateOnly) {
-    $ErrorMessages = Format-ValidationOutput (Test-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupNameTM `
+    $ErrorMessages = Format-ValidationOutput (Test-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupNameHA `
                                                                                   -TemplateFile $TrafficManagerTemplateFile `
                                                                                   -TemplateParameterFile $TrafficManagerTemplateParametersFile `
                                                                                   @OptionalParameters)
@@ -155,7 +155,7 @@ if ($ValidateOnly) {
 }
 else {
     New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TrafficManagerTemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
-                                       -ResourceGroupName $ResourceGroupNameTM `
+                                       -ResourceGroupName $ResourceGroupNameHA `
                                        -TemplateFile $TrafficManagerTemplateFile `
                                        -TemplateParameterFile $TrafficManagerTemplateParametersFile `
                                        @OptionalParameters `
