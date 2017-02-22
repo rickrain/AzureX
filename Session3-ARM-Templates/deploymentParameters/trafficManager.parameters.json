@@ -5,7 +5,7 @@
     "trafficManagerProfileSettings": {
       "value": {
         "name": "tmProfile",
-        "trafficRoutingMethod": "Performance",
+        "trafficRoutingMethod": "Priority",
         "ttl": 300,
         "monitorConfig": {
           "protocol": "HTTP",
