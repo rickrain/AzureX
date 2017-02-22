@@ -126,7 +126,7 @@ if ($ValidateOnly) {
     }
 }
 else {
-    New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
+    $appDeployment = New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                        -ResourceGroupName $ResourceGroupName `
                                        -TemplateFile $TemplateFile `
                                        -TemplateParameterFile $TemplateParametersFile `
@@ -154,7 +154,7 @@ if ($ValidateOnly) {
     }
 }
 else {
-    New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TrafficManagerTemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
+    $tmDeployment = New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TrafficManagerTemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                        -ResourceGroupName $ResourceGroupNameHA `
                                        -TemplateFile $TrafficManagerTemplateFile `
                                        -TemplateParameterFile $TrafficManagerTemplateParametersFile `
@@ -164,4 +164,32 @@ else {
     if ($ErrorMessages) {
         Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
     }
+	else
+	{
+		$appPipResourceId = $appDeployment.Outputs.result.Value.value.ToString()
+
+		$appEndpoint = Get-AzureRmTrafficManagerEndpoint -ResourceGroupName $ResourceGroupNameHA `
+							-Name $ResourceGroupName `
+							-Type AzureEndpoints `
+							-ProfileName $tmDeployment.Outputs.result.Value.value.ToString() `
+							-ErrorAction SilentlyContinue
+		
+		if ($appEndpoint -eq $null)
+		{
+			New-AzureRmTrafficManagerEndpoint -ResourceGroupName $ResourceGroupNameHA `
+							-Name $ResourceGroupName `
+							-Type AzureEndpoints `
+							-ProfileName $tmDeployment.Outputs.result.Value.value.ToString() `
+							-EndpointStatus Enabled `
+							-TargetResourceId $appPipResourceId
+		}
+		else
+		{
+			$appEndpoint.TargetResourceId = $appPipResourceId
+			$appEndpoint.Type = "AzureEndpoints"
+			$appEndpoint.EndpointStatus = "Enabled"
+
+			Set-AzureRmTrafficManagerEndpoint -TrafficManagerEndpoint $appEndpoint
+		}
+	}
 }

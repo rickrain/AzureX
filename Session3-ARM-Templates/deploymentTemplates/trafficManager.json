@@ -32,5 +32,10 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "profileName": {
+      "value": "[parameters('trafficManagerProfileSettings').name]",
+      "type": "string"
+    }
+  }
 }

@@ -136,8 +136,8 @@
     }
   ],
   "outputs": {
-    "pipFQDN": {
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipName'))).dnsSettings.fqdn]",
+    "pipResourceId": {
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipName'))]",
       "type": "string"
     }
   }

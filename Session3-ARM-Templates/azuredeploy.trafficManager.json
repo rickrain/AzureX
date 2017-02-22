@@ -35,5 +35,10 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "result": {
+      "type": "object",
+      "value": "[reference('trafficManager').outputs.profileName]"
+    }
+  }
 }
