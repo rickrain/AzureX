@@ -29,6 +29,7 @@
     <Content Include="azuredeploy.trafficManager.json" />
     <Content Include="azuredeploy.json" />
     <Content Include="azuredeploy.parameters.json" />
+    <Content Include="deploymentParameters\appStorage.parameters.json" />
     <Content Include="deploymentParameters\redisCache.Standard.parameters.json" />
     <Content Include="deploymentParameters\bizTier.parameters.json" />
     <Content Include="deploymentParameters\documentDB.parameters.json" />
@@ -37,6 +38,7 @@
     <Content Include="deploymentParameters\trafficManager.parameters.json" />
     <Content Include="deploymentParameters\virtualNetwork.parameters.json" />
     <Content Include="deploymentParameters\webTier.parameters.json" />
+    <Content Include="deploymentTemplates\appStorage.json" />
     <Content Include="deploymentTemplates\redisCache.Standard.json" />
     <Content Include="deploymentTemplates\bizTier.json" />
     <Content Include="deploymentTemplates\documentDB.json" />
