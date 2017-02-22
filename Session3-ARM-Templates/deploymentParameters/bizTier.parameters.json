@@ -23,6 +23,15 @@
             "sku": "16.04-LTS",
             "version": "latest"
           }
+        },
+        "lbSettings": {
+          "healthProbeSettings": {
+            "protocol": "Http",
+            "port": 80,
+            "requestPath": "/",
+            "intervalInSeconds": 10,
+            "numberOfProbes": 2
+          }
         }
       }
     }

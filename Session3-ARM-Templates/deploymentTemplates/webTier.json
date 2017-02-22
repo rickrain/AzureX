@@ -16,7 +16,9 @@
     "lbPipName": "[concat(parameters('webTierSettings').name, 'Pip')]",
     "lbPipDnsName": "[concat(toLower(parameters('webTierSettings').name), '-', uniqueString(resourceGroup().id))]",
     "lbName": "[concat(parameters('webTierSettings').name, 'Lb')]",
-    "lbBackendPoolName": "[concat(parameters('webTierSettings').name, 'webLbBackendPool')]"
+    "lbBackendPoolName": "[concat(parameters('webTierSettings').name, 'LbBackendPool')]",
+    "lbHealthProbeName": "healthProbe",
+    "lbFrontendIPConfigurationsName": "lbFrontEnd"
   },
   "resources": [
     {
@@ -119,7 +121,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "lbFrontEnd",
+            "name": "[variables('lbFrontendIPConfigurationsName')]",
             "properties": {
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPipName'))]"
@@ -130,6 +132,37 @@
         "backendAddressPools": [
           {
             "name": "[variables('lbBackendPoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "httpRule",
+            "properties": {
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('lbName')),'/frontendIPConfigurations/', variables('lbFrontendIPConfigurationsName'))]"
+              },
+              "backendPort": 80,
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('lbName')),'/backendAddressPools/', variables('lbBackendPoolName'))]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('lbName')),'/probes/', variables('lbHealthProbeName'))]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('lbHealthProbeName')]",
+            "properties": {
+              "protocol": "[parameters('webTierSettings').lbSettings.healthProbeSettings.protocol]",
+              "port": "[parameters('webTierSettings').lbSettings.healthProbeSettings.port]",
+              "requestPath": "[parameters('webTierSettings').lbSettings.healthProbeSettings.requestPath]",
+              "intervalInSeconds": "[parameters('webTierSettings').lbSettings.healthProbeSettings.intervalInSeconds]",
+              "numberOfProbes": "[parameters('webTierSettings').lbSettings.healthProbeSettings.numberOfProbes]"
+            }
           }
         ]
       }
