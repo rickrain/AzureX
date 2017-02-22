@@ -8,7 +8,7 @@ Param(
     [string] $ResourceGroupNamePrefix = 'AzureX-Session-3',
     [switch] $UploadArtifacts,
     [string] $StorageAccountName,
-    [string] $StorageContainerName = $ResourceGroupName.ToLowerInvariant() + '-stageartifacts',
+    [string] $StorageContainerName = $ResourceGroupNamePrefix.ToLowerInvariant() + '-stageartifacts',
     [string] $TemplateFile = 'azuredeploy.json',
     [string] $TemplateParametersFile = 'azuredeploy.parameters.json',
     [string] $TrafficManagerTemplateFile = 'azuredeploy.trafficManager.json',
