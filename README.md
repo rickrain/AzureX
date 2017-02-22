@@ -32,7 +32,5 @@ Login-AzureRmAccount
 # Deploy session 3 ARM template to secondary region (ie: East US).
 .\Session3-ARM-Templates\Deploy-AzureResourceGroup.ps1 -ResourceGroupLocation eastus -UploadArtifacts
 
-# Deploy Traffic Manager template
-<coming soon>
 
 ```
