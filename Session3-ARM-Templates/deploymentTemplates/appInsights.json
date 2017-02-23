@@ -9,12 +9,12 @@
       }
     }
   },
-  "variables": {},
+  "variables": {  },
   "resources": [
     {
       "name": "[parameters('appInsightsSettings').name]",
       "type": "Microsoft.Insights/components",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('appInsightsSettings').location]",
       "apiVersion": "2014-04-01",
       "dependsOn": [],
       "tags": {

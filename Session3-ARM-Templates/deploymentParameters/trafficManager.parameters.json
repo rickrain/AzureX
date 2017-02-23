@@ -4,7 +4,7 @@
   "parameters": {
     "trafficManagerProfileSettings": {
       "value": {
-        "name": "tmProfile",
+        "name": "tmAzureX",
         "trafficRoutingMethod": "Priority",
         "ttl": 300,
         "monitorConfig": {

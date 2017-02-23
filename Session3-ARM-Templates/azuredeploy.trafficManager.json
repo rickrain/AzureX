@@ -14,7 +14,10 @@
     "parametersFolder": "deploymentParameters",
 
     "trafficManagerTemplateFileName": "trafficManager.json",
-    "trafficManagerTemplateParametersFileName": "trafficManager.parameters.json"
+    "trafficManagerTemplateParametersFileName": "trafficManager.parameters.json",
+
+    "appInsightsTemplateFileName": "appInsights.json",
+    "appInsightsTemplateParametersFileName": "appInsights.parameters.json"
   },
   "resources": [
     {
@@ -30,6 +33,23 @@
         },
         "parametersLink": {
           "uri": "[concat(parameters('_artifactsLocation'), '/', variables('parametersFolder'), '/', variables('trafficManagerTemplateParametersFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "name": "appInsights",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('appInsightsTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parametersLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('parametersFolder'), '/', variables('appInsightsTemplateParametersFileName'), parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         }
       }

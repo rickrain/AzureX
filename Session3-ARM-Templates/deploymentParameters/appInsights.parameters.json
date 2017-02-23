@@ -4,7 +4,8 @@
   "parameters": {
     "appInsightsSettings": {
       "value": {
-        "name": "appInsights"
+        "name": "aiAzureX",
+        "location": "southcentralus"
       }
     }
   }
